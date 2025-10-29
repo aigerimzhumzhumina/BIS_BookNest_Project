@@ -37,32 +37,33 @@ export class RegisterComponent {
     return password === confirmPassword ? null : { mismatch: true };
   }
 
-  onSubmit(): void {
-    if (this.registerForm.valid) {
-      this.loading = true;
-      this.error = '';
+onSubmit(): void {
+  if (this.registerForm.valid) {
+    this.loading = true;
+    this.error = '';
 
-      const user = {
-        username: this.registerForm.get('username')?.value,
-        email: this.registerForm.get('email')?.value,
-        password: this.registerForm.get('password')?.value
-      };
+    const user = {
+      username: this.registerForm.get('username')?.value,
+      email: this.registerForm.get('email')?.value,
+      password: this.registerForm.get('password')?.value
+    };
 
-      this.authService.register(user).subscribe({
-        next: (response) => {
-          this.loading = false;
-          if (response.success) {
-            this.router.navigate(['/login']);
-          } else {
-            this.error = response.message || 'Ошибка регистрации';
-          }
-        },
-        error: (error) => {
-          this.loading = false;
-          this.error = 'Ошибка регистрации. Попробуйте снова.';
-          console.error('Registration error:', error);
+    this.authService.register(user).subscribe({
+      next: (response) => {
+        this.loading = false;
+        if (response.success) {
+          // Success! Navigate to login or dashboard
+          this.router.navigate(['/login']);
+        } else {
+          this.error = response.message || 'Registration failed';
         }
-      });
-    }
+      },
+      error: (error) => {
+        this.loading = false;
+        this.error = error.error?.message || 'Registration error. Please try again.';
+        console.error('Registration error:', error);
+      }
+    });
   }
+}
 }
