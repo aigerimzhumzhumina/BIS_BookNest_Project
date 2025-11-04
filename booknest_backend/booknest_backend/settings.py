@@ -71,9 +71,9 @@ WSGI_APPLICATION = 'booknest_backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'booknest_db',
-        'USER': 'booknest_user',
-        'PASSWORD': 'your_secure_password',
+        'NAME': 'booknest',
+        'USER': 'apple',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '5432',
     }
