@@ -1,0 +1,235 @@
+<app-header></app-header>
+
+<div class="search-container">
+  <div class="search-header">
+    <div class="search-main">
+      <h1>Book search</h1>
+      <div class="search-input-wrapper">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery" 
+          (input)="onSearchInput()"
+          placeholder="Enter book title or author..."
+          class="search-input">
+      </div>
+    </div>
+
+    <div class="search-controls">
+      <button class="btn-filters" (click)="toggleFiltersPanel()">
+        <span>Filters</span>
+        @if (selectedGenres.length + selectedTropes.length + selectedCountries.length > 0) {
+          <span class="filter-badge">{{ selectedGenres.length + selectedTropes.length + selectedCountries.length }}</span>
+        }
+      </button>
+      
+      <div class="sort-controls">
+        <label>Sort by:</label>
+        <select [(ngModel)]="sortBy" (change)="onSortChange()" class="sort-select">
+          <option value="rating">By rating</option>
+          <option value="title">By title</option>
+          <option value="year">By year</option>
+          <option value="pages">By pages</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="search-content">
+    <!-- Filters Sidebar -->
+    @if (showFilters) {
+      <aside class="filters-sidebar">
+        <div class="filters-header">
+          <h2>Filters</h2>
+          <button class="btn-clear" (click)="clearAllFilters()">Clear all</button>
+        </div>
+
+        <div class="filters-list">
+          <!-- Genres -->
+          <div class="filter-group">
+            <h3>Genres</h3>
+            <div class="filter-options">
+              @for (genre of availableGenres; track genre) {
+                <label class="filter-checkbox">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterSelected(selectedGenres, genre)"
+                    (change)="toggleFilter(selectedGenres, genre)">
+                  <span>{{ genre }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <!-- Tropes -->
+          <div class="filter-group">
+            <h3>Tropes</h3>
+            <div class="filter-options">
+              @for (trope of availableTropes; track trope) {
+                <label class="filter-checkbox">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterSelected(selectedTropes, trope)"
+                    (change)="toggleFilter(selectedTropes, trope)">
+                  <span>{{ trope }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <!-- Countries -->
+          <div class="filter-group">
+            <h3>Country</h3>
+            <div class="filter-options">
+              @for (country of availableCountries; track country) {
+                <label class="filter-checkbox">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterSelected(selectedCountries, country)"
+                    (change)="toggleFilter(selectedCountries, country)">
+                  <span>{{ country }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <!-- Authors -->
+          <div class="filter-group">
+            <h3>Author</h3>
+            <div class="filter-options">
+              @for (author of availableAuthors; track author) {
+                <label class="filter-checkbox">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterSelected(selectedAuthors, author)"
+                    (change)="toggleFilter(selectedAuthors, author)">
+                  <span>{{ author }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <!-- Age Rating -->
+          <div class="filter-group">
+            <h3>Age Rating</h3>
+            <div class="filter-options">
+              @for (rating of availableAgeRatings; track rating) {
+                <label class="filter-checkbox">
+                  <input 
+                    type="checkbox" 
+                    [checked]="isFilterSelected(selectedAgeRatings, rating)"
+                    (change)="toggleFilter(selectedAgeRatings, rating)">
+                  <span>{{ rating }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          <!-- Year Range -->
+          <div class="filter-group">
+            <h3>Year of publication</h3>
+            <div class="range-inputs">
+              <input 
+                type="number" 
+                [(ngModel)]="yearFrom" 
+                (change)="searchBooks()"
+                placeholder="From"
+                class="range-input">
+              <span>—</span>
+              <input 
+                type="number" 
+                [(ngModel)]="yearTo" 
+                (change)="searchBooks()"
+                placeholder="To"
+                class="range-input">
+            </div>
+          </div>
+
+          <!-- Pages Range -->
+          <div class="filter-group">
+            <h3>Volume (number of pages)</h3>
+            <div class="range-inputs">
+              <input 
+                type="number" 
+                [(ngModel)]="pagesFrom" 
+                (change)="searchBooks()"
+                placeholder="From"
+                class="range-input">
+              <span>—</span>
+              <input 
+                type="number" 
+                [(ngModel)]="pagesTo" 
+                (change)="searchBooks()"
+                placeholder="To"
+                class="range-input">
+            </div>
+          </div>
+        </div>
+      </aside>
+    }
+
+    <!-- Results Section -->
+    <main class="results-section">
+      @if (isLoading) {
+        <div class="loading-state">
+          <div class="spinner"></div>
+          <p>Loading books</p>
+        </div>
+      } @else if (books.length > 0) {
+        <div class="results-info">
+          <p>Found books: <strong>{{ totalBooks }}</strong></p>
+        </div>
+
+        <div class="books-grid">
+          @for (book of books; track book.id) {
+            <div class="book-card" (click)="navigateToBook(book.id)">
+              <div class="book-cover-wrapper">
+                <img [src]="book.cover" [alt]="book.title" class="book-cover">
+                <div class="book-overlay">
+                  <span class="view-details">More info</span>
+                </div>
+              </div>
+              <div class="book-info">
+                <h3>{{ book.title }}</h3>
+                <p class="book-author">{{ book.author }}</p>
+                <div class="book-meta">
+                  <span class="rating"> {{ book.rating }}</span>
+                  <span class="pages"> {{ book.pages }} стр.</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        @if (totalPages > 1) {
+          <div class="pagination">
+            <button 
+              class="btn-page" 
+              (click)="previousPage()" 
+              [disabled]="currentPage === 1">
+               Back
+            </button>
+            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <button 
+              class="btn-page" 
+              (click)="nextPage()" 
+              [disabled]="currentPage === totalPages">
+              Next →
+            </button>
+          </div>
+        }
+      } @else {
+        <div class="empty-state">
+          <div class="empty-icon">!</div>
+          <h2>Books not found</h2>
+          <p>Try changing the search parameters</p>
+          <button class="btn-primary" (click)="clearAllFilters()">Reset filters</button>
+        </div>
+      }
+    </main>
+  </div>
+</div>

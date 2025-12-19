@@ -1,0 +1,212 @@
+<app-header></app-header>
+
+<div class="book-details-container">
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading book details...</p>
+    </div>
+  } @else if (book) {
+    <div class="book-details-content">
+      <!-- Book Header Section -->
+      <section class="book-header">
+        <div class="book-cover-section">
+          <img [src]="book.cover" [alt]="book.title" class="book-cover-large">
+        </div>
+
+        <div class="book-main-info">
+          <h1 class="book-title">{{ book.title }}</h1>
+          <p class="book-author">{{ book.author }}</p>
+
+          <div class="book-rating-section">
+            <div class="rating-display">
+              @for (star of getStars(book.rating); track $index) {
+                @if (star === 'full') {
+                  <span class="star full">★</span>
+                } @else {
+                  <span class="star empty">☆</span>
+                }
+              }
+              <span class="rating-value">{{ book.rating }}/5</span>
+            </div>
+          </div>
+
+          <div class="book-metadata">
+            <div class="metadata-item">
+              <span class="metadata-label">Genres:</span>
+              <div class="metadata-tags">
+                @for (genre of book.genre; track genre) {
+                  <span class="tag">{{ genre }}</span>
+                }
+              </div>
+            </div>
+
+            @if (book.tropes && book.tropes.length > 0) {
+              <div class="metadata-item">
+                <span class="metadata-label">Tropes:</span>
+                <div class="metadata-tags">
+                  @for (trope of book.tropes; track trope) {
+                    <span class="tag">{{ trope }}</span>
+                  }
+                </div>
+              </div>
+            }
+
+            <div class="metadata-item">
+              <span class="metadata-label">Country:</span>
+              <span class="metadata-value">{{ book.country }}</span>
+            </div>
+
+            <div class="metadata-item">
+              <span class="metadata-label">Year of publication:</span>
+              <span class="metadata-value">{{ book.year }}</span>
+            </div>
+
+            <div class="metadata-item">
+              <span class="metadata-label">Pages:</span>
+              <span class="metadata-value">{{ book.pages }}</span>
+            </div>
+
+            <div class="metadata-item">
+              <span class="metadata-label">Age Rating:</span>
+              <span class="metadata-value">{{ book.age_rating }}</span>
+            </div>
+          </div>
+
+          <div class="book-actions">
+            <button class="btn-primary btn-read" (click)="startReading()">
+              Start reading
+            </button>
+
+            <button 
+              class="btn-favorite" 
+              [class.active]="isFavorite"
+              (click)="toggleFavorite()"
+              [disabled]="isAddingToFavorite">
+              @if (isFavorite) {
+                <span>Favourites</span>
+              } @else {
+                <span>Add to favorites</span>
+              }
+            </button>
+
+            <div class="chart-selector-wrapper">
+              <button class="btn-add-to-chart" (click)="toggleChartSelector()">
+                + Add to chart
+              </button>
+
+              @if (showChartSelector) {
+                <div class="chart-dropdown">
+                  <h4>Choose a chart:</h4>
+                  @if (userCharts.length > 0) {
+                    @for (chart of userCharts; track chart.id) {
+                      <div class="chart-option" (click)="addToChart(chart.id)">
+                        <span>{{ chart.title }}</span>
+                      </div>
+                    }
+                  } @else {
+                    <p class="no-charts">You don't have any charts yet</p>
+                  }
+                  <button class="btn-create-chart" (click)="createNewChart()">
+                    Create new chart
+                  </button>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Book Description -->
+      <section class="book-description-section">
+        <h2>Description</h2>
+        <p class="book-description">{{ book.description }}</p>
+      </section>
+
+      <!-- Comments Section -->
+      <section class="comments-section">
+        <h2>Comments ({{ comments.length }})</h2>
+
+        <!-- Add Comment Form -->
+        <div class="add-comment-form">
+          <h3>Leave a comment</h3>
+          
+          <div class="rating-input">
+            <span>Your rating:</span>
+            <div class="stars-input">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <span 
+                  class="star-input"
+                  [class.selected]="star <= newRating"
+                  (click)="setRating(star)">
+                  @if (star <= newRating) {
+                    <span>★</span>
+                  } @else {
+                    <span>☆</span>
+                  }
+                </span>
+              }
+            </div>
+          </div>
+
+          <textarea 
+            [(ngModel)]="newComment"
+            placeholder="Write your review..."
+            class="comment-textarea"
+            rows="4"></textarea>
+
+          <button 
+            class="btn-submit-comment" 
+            (click)="submitComment()"
+            [disabled]="isSubmittingComment || !newComment.trim()">
+            @if (isSubmittingComment) {
+              <span>Submitting...</span>
+            } @else {
+              <span>Submit review</span>
+            }
+          </button>
+        </div>
+
+        <!-- Comments List -->
+        <div class="comments-list">
+          @if (comments.length > 0) {
+            @for (comment of comments; track comment.id) {
+              <div class="comment-card">
+                <div class="comment-header">
+                  <div class="comment-user">
+                    <img [src]="comment.user.avatar" [alt]="comment.user.username" class="user-avatar">
+                    <div class="user-info">
+                      <span class="username">{{ comment.user.username }}</span>
+                      <span class="comment-date">{{ comment.created_date }}</span>
+                    </div>
+                  </div>
+                  @if (comment.rating) {
+                    <div class="comment-rating">
+                      @for (star of getCommentStars(comment.rating); track $index) {
+                        @if (star === 'full') {
+                          <span class="star">★</span>
+                        } @else {
+                          <span class="star empty">☆</span>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+                <p class="comment-text">{{ comment.comment }}</p>
+              </div>
+            }
+          } @else {
+            <div class="no-comments">
+              <p>No comments yet. Be the first!</p>
+            </div>
+          }
+        </div>
+      </section>
+    </div>
+  } @else {
+    <div class="error-state">
+      <h2>Book not found</h2>
+      <button class="btn-primary" routerLink="/search">Return to search</button>
+    </div>
+  }
+</div>

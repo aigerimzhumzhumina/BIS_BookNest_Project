@@ -36,6 +36,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    age = models.IntegerField(null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    bio = models.TextField(max_length=500, null=True, blank=True)
     
     objects = UserManager()
     

@@ -1,0 +1,215 @@
+<app-header></app-header>
+
+<div class="chart-creator-container">
+  <div class="chart-creator-content">
+    <div class="tabs-header">
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'create'"
+        (click)="switchTab('create')">
+        + Create Chart
+      </button>
+      <button 
+        class="tab-button" 
+        [class.active]="activeTab === 'manage'"
+        (click)="switchTab('manage')">
+        My charts: ({{ userCharts.length }})
+      </button>
+    </div>
+
+    <!-- Create Chart Tab -->
+    @if (activeTab === 'create') {
+      <div class="create-chart-section">
+        <h1>
+          @if (editingChartId) {
+            <span>Edit Chart</span>
+          } @else {
+            <span>Create New Chart</span>
+          }
+        </h1>
+        <p class="section-description">
+          Create your personal book chart — collect your favorite books into one collection
+        </p>
+
+        <div class="chart-form">
+          <!-- Cover Upload -->
+          <div class="cover-upload-section">
+            <label class="cover-label">Chart Cover</label>
+            <div class="cover-preview-wrapper">
+              @if (chartCoverPreview) {
+                <img [src]="chartCoverPreview" alt="Chart cover" class="cover-preview">
+              } @else {
+                <div class="cover-placeholder">
+                  <span class="placeholder-icon">🖼️</span>
+                  <span class="placeholder-text">Upload cover image</span>
+                </div>
+              }
+              <label class="cover-upload-btn">
+                <input type="file" accept="image/*" (change)="onCoverChange($event)">
+                <span>Choose Image</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Chart Info -->
+          <div class="form-group">
+            <label>Chart Title *</label>
+            <input 
+              type="text" 
+              [(ngModel)]="chartTitle" 
+              placeholder="Example: Top Sci-Fi Books"
+              class="form-input">
+          </div>
+
+          <div class="form-group">
+            <label>Description</label>
+            <textarea 
+              [(ngModel)]="chartDescription" 
+              placeholder="Tell us about your chart..."
+              class="form-textarea"
+              rows="4"></textarea>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="isPublic">
+              <span>Make chart public (other users will be able to see it)</span>
+            </label>
+          </div>
+
+          <!-- Books Selection -->
+          <div class="books-selection-section">
+            <div class="books-header">
+              <h3>Books in chart ({{ selectedBooks.length }})</h3>
+              <button class="btn-add-book" (click)="toggleBookSearch()">
+                + Add book
+              </button>
+            </div>
+
+            @if (showBookSearch) {
+              <div class="book-search-panel">
+                <div class="search-input-wrapper">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="searchQuery" 
+                    (input)="searchBooks()"
+                    placeholder="Search for books..."
+                    class="search-input">
+                </div>
+
+                @if (isSearching) {
+                  <div class="search-loading">
+                    <div class="small-spinner"></div>
+                    <span>Searching...</span>
+                  </div>
+                } @else if (searchResults.length > 0) {
+                  <div class="search-results">
+                    @for (book of searchResults; track book.id) {
+                      <div class="search-result-item" (click)="addBookToChart(book)">
+                        <img [src]="book.cover" [alt]="book.title" class="result-cover">
+                        <div class="result-info">
+                          <h4>{{ book.title }}</h4>
+                          <p>{{ book.author }}</p>
+                        </div>
+                        <button class="btn-add-result">+</button>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            }
+
+            @if (selectedBooks.length > 0) {
+              <div class="selected-books-grid">
+                @for (book of selectedBooks; track book.id) {
+                  <div class="selected-book-card">
+                    <button class="btn-remove-book" (click)="removeBookFromChart(book.id)">✕</button>
+                    <img [src]="book.cover" [alt]="book.title">
+                    <div class="book-info">
+                      <h4>{{ book.title }}</h4>
+                      <p>{{ book.author }}</p>
+                    </div>
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="empty-books-state">
+                <p>Add books to your chart</p>
+              </div>
+            }
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button 
+              class="btn-save-chart" 
+              (click)="createChart()"
+              [disabled]="isSaving || !chartTitle.trim()">
+              @if (isSaving) {
+                <span>Saving...</span>
+              } @else if (editingChartId) {
+                <span>💾 Save changes</span>
+              } @else {
+                <span>✨ Create chart</span>
+              }
+            </button>
+            <button class="btn-reset" (click)="resetForm()">
+              Reset
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Manage Charts Tab -->
+    @if (activeTab === 'manage') {
+      <div class="manage-charts-section">
+        <h1>My charts</h1>
+        <p class="section-description">Manage your book collections</p>
+
+        @if (userCharts.length > 0) {
+          <div class="charts-grid">
+            @for (chart of userCharts; track chart.id) {
+              <div class="chart-card">
+                <div class="chart-cover">
+                  @if (chart.cover_image) {
+                    <img [src]="chart.cover_image" [alt]="chart.title">
+                  } @else {
+                    <div class="chart-placeholder">
+                      <span>✦</span>
+                    </div>
+                  }
+                  <div class="chart-overlay">
+                    <button class="btn-edit-chart" (click)="editChart(chart)">✐</button>
+                    <button class="btn-delete-chart" (click)="deleteChart(chart.id)">🗑️</button>
+                  </div>
+                </div>
+                <div class="chart-info">
+                  <h3>{{ chart.title }}</h3>
+                  @if (chart.description) {
+                    <p class="chart-description">{{ chart.description }}</p>
+                  }
+                  <div class="chart-meta">
+                    <span class="book-count">✦ {{ chart.books.length }} books</span>
+                    @if (chart.is_public) {
+                      <span class="public-badge">Public</span>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <div class="empty-icon">✦</div>
+            <h2>You don't have any charts yet</h2>
+            <p>Create your first book collection</p>
+            <button class="btn-primary" (click)="switchTab('create')">
+              + Create chart
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,102 @@
+<app-header></app-header>
+
+<div class="home-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to BookNest!</h1>
+      <p class="hero-subtitle">
+        Your personal library at your fingertips. Read, discover, and share books with millions of readers around the world.
+      </p>
+      <button class="btn-primary" (click)="navigateToRegister()">
+        Start reading for free
+      </button>
+    </div>
+    <div class="hero-image">
+      <img src="assets/hero-books.png" alt="Books">
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2 class="section-title">Why BookNest?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">1</div>
+        <h3>Massive Library</h3>
+        <p>Thousands of books in various genres for every taste</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">2</div>
+        <h3>Personalization</h3>
+        <p>Create your own collections and get recommendations</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">3</div>
+        <h3>Smart Search</h3>
+        <p>Advanced filters for quick search of the needed book</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">4</div>
+        <h3>Autosave</h3>
+        <p>Continue reading from where you left off</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Collections Section -->
+  <section class="collections-section">
+    <h2 class="section-title">Popular Collections</h2>
+    <div class="collections-grid">
+      @for (collection of collections; track collection.id) {
+        <div class="collection-card" (click)="openCollection(collection)">
+          <div class="collection-image">
+            <img [src]="collection.image" [alt]="collection.title">
+            <div class="collection-overlay">
+              <span class="view-collection">View Collection →</span>
+            </div>
+          </div>
+          <div class="collection-info">
+            <h3>{{ collection.title }}</h3>
+            <p>{{ collection.description }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <h2>Ready to start your reading journey?</h2>
+    <p>Join thousands of readers today</p>
+    <button class="btn-primary" (click)="navigateToRegister()">
+      Register for free
+    </button>
+  </section>
+</div>
+
+<!-- Modal для отображения книг из коллекции -->
+@if (selectedCollection) {
+  <div class="modal-overlay" (click)="closeCollection()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeCollection()">✕</button>
+      <h2>{{ selectedCollection.title }}</h2>
+      <p class="modal-description">{{ selectedCollection.description }}</p>
+      <div class="books-grid">
+        @for (book of selectedCollection.books; track book.id) {
+          <div class="book-card" (click)="navigateToBook(book.id)">
+            <img [src]="book.cover" [alt]="book.title">
+            <div class="book-info">
+              <h4>{{ book.title }}</h4>
+              <p>{{ book.author }}</p>
+              <div class="rating">
+                <span class="star">*</span>
+                <span>{{ book.rating }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

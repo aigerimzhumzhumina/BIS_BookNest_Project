@@ -9,6 +9,12 @@ export interface User {
   email: string;
   password?: string;
   role?: string;
+  avatar?: string;
+  age?: number;
+  city?: string;
+  bio?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface AuthResponse {
@@ -96,6 +102,7 @@ export class AuthService {
     // Clear local storage and state
     localStorage.removeItem('currentUser');
     localStorage.removeItem('token');
+    localStorage.removeItem('userToken');
     this.currentUserSubject.next(null);
   }
 
@@ -110,5 +117,18 @@ export class AuthService {
   // Optional: Add profile method with trailing slash
   getProfile(): Observable<any> {
     return this.http.get(`${this.apiUrl}/profile/`);
+  }
+
+  updateProfile(userData: Partial<User>): Observable<User> {
+    return this.http.patch<User>(`${this.apiUrl}/profile/`, userData).pipe(
+      tap(user => {
+        const currentUser = this.currentUserValue;
+        if (currentUser) {
+          const updatedUser = { ...currentUser, ...user };
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          this.currentUserSubject.next(updatedUser);
+        }
+      })
+    );
   }
 }

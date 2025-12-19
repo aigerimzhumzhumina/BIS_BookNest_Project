@@ -1,78 +1,156 @@
+<app-header></app-header>
+
 <div class="dashboard-container">
-  <header class="dashboard-header">
-    <div class="header-content">
-      <div class="brand">
-        <h1 class="brand-title">Home page</h1>
-        <p class="brand-subtitle">Your personal dashboard</p>
-      </div>
-      <div class="user-section">
-        <div class="user-info">
-          <div class="user-avatar">
-            {{ currentUser?.username?.charAt(0)?.toUpperCase() }}
-          </div>
-          <div class="user-details">
-            <span class="user-name">{{ currentUser?.username }}</span>
-            <span class="user-email">{{ currentUser?.email }}</span>
+  @if (currentUser) {
+    <div class="dashboard-content">
+      <!-- User Profile Section -->
+      <section class="profile-section">
+        <div class="profile-header">
+          <h1>My profile</h1>
+          <button class="btn-edit" (click)="toggleEditMode()">
+            @if (isEditMode) {
+              <span>Cancel</span>
+            } @else {
+              <span>Edit</span>
+            }
+          </button>
+        </div>
+
+        <div class="profile-card">
+        <!----  <div class="avatar-section">
+            <img [src]="isEditMode ? editUser.avatar : currentUser.avatar" 
+                 [alt]="currentUser.username" 
+                 class="avatar">
+            @if (isEditMode) {
+              <label class="avatar-upload">
+                <input type="file" accept="image/*" (change)="onAvatarChange($event)">
+                <span>Change photo</span>
+              </label>
+            }
+          </div> --->
+          
+
+          <div class="profile-info">
+            @if (isEditMode) {
+              <div class="edit-form">
+                <div class="form-group">
+                  <label>Username</label>
+                  <input type="text" [(ngModel)]="editUser.username" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>Email</label>
+                  <input type="email" [(ngModel)]="editUser.email" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>Age</label>
+                  <input type="number" [(ngModel)]="editUser.age" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>City</label>
+                  <input type="text" [(ngModel)]="editUser.city" class="form-input">
+                </div>
+                <div class="form-group">
+                  <label>About me</label>
+                  <textarea [(ngModel)]="editUser.bio" class="form-textarea" rows="4"></textarea>
+                </div>
+                <button class="btn-save" (click)="saveProfile()">
+                  Save changes
+                </button>
+              </div>
+            } @else {
+              <div class="info-display">
+                <h2>{{ currentUser.username }}</h2>
+                <p class="email">{{ currentUser.email }}</p>
+
+                <div class="info-grid">
+                  @if (currentUser.age) {
+                    <div class="info-item">
+                      <span class="info-label">Age:</span>
+                      <span class="info-value">{{ currentUser.age }} лет</span>
+                    </div>
+                  }
+                  @if (currentUser.city) {
+                    <div class="info-item">
+                      <span class="info-label">City:</span>
+                      <span class="info-value">{{ currentUser.city }}</span>
+                    </div>
+                  }
+                  <div class="info-item">
+                    <span class="info-label">On site since:</span>
+                    <span class="info-value">{{ currentUser.createdAt }}</span>
+                  </div>
+                </div>
+
+                @if (currentUser.bio) {
+                  <div class="bio">
+                    <h3>About me</h3>
+                    <p>{{ currentUser.bio }}</p>
+                  </div>
+                }
+              </div>
+            }
           </div>
         </div>
-        <button (click)="logout()" class="logout-btn">
-          <span class="logout-text">Log out</span>
-          <span class="logout-icon">→</span>
-        </button>
-      </div>
-    </div>
-  </header>
+      </section>
 
-  <main class="dashboard-main">
-    <div class="welcome-section">
-      <div class="welcome-card">
-        <h2 class="welcome-title">Welcome, {{ currentUser?.username }}!</h2>
-        <p class="welcome-text">You've successfully log into your account. Let's dive into the world of books!</p>
-        
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">User name</span>
-              <span class="stat-value">{{ currentUser?.username }}</span>
+      <!-- Current Reading Section -->
+      <section class="reading-section">
+        <h2 class="section-title">Currently reading</h2>
+        @if (currentBook) {
+          <div class="current-book-card">
+            <img [src]="currentBook.book.cover" [alt]="currentBook.book.title" class="book-cover">
+            <div class="book-details">
+              <h3>{{ currentBook.book.title }}</h3>
+              <p class="author">{{ currentBook.book.author }}</p>
+              
+              <div class="progress-info">
+                <div class="progress-text">
+                  <span>Page {{ currentBook.current_page }} of {{ currentBook.total_pages }}</span>
+                  <span class="progress-percent">{{ currentBook.progress }}%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="currentBook.progress"></div>
+                </div>
+              </div>
+              
+              <button class="btn-continue" (click)="continueReading()">
+                Continue reading
+              </button>
             </div>
           </div>
-          
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Email address</span>
-              <span class="stat-value">{{ currentUser?.email }}</span>
-            </div>
+        } @else {
+          <div class="empty-state">
+            <p>You haven't started reading any books yet</p>
+            <button class="btn-primary" routerLink="/search">Find a book</button>
           </div>
-          
-          <div class="stat-card">
-            <div class="stat-info">
-              <span class="stat-label">Account status</span>
-              <span class="stat-value status-active">Active</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+        }
+      </section>
 
-    <div class="actions-section">
-      <h3 class="section-title">Fast actions</h3>
-      <div class="actions-grid">
-        <button class="action-btn">
-          <span class="action-text">Settings</span>
-        </button>
-        
-        <button class="action-btn">
-          <span class="action-text">Security</span>
-        </button>
-        
-        <button class="action-btn">
-          <span class="action-text">Statistics</span>
-        </button>
-        
-        <button class="action-btn">
-          <span class="action-text">Help</span>
-        </button>
-      </div>
+      <!-- Favorite Books Section -->
+      <section class="favorites-section">
+        <h2 class="section-title">Favorites ({{ favoriteBooks.length }})</h2>
+        @if (favoriteBooks.length > 0) {
+          <div class="favorites-grid">
+            @for (book of favoriteBooks; track book.id) {
+              <div class="favorite-book-card">
+                <button class="btn-remove" (click)="removeFromFavorites(book.id)" title="Remove from favorites">
+                  ✕
+                </button>
+                <img [src]="book.book.cover" [alt]="book.book.title" (click)="navigateToBook(book.id)">
+                <div class="book-info">
+                  <h4 (click)="navigateToBook(book.id)">{{ book.book.title }}</h4>
+                  <p>{{ book.book.author }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>You don't have any favorite books yet</p>
+            <button class="btn-primary" routerLink="/search">Find books</button>
+          </div>
+        }
+      </section>
     </div>
-  </main>
+  }
 </div>
