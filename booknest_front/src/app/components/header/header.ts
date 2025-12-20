@@ -19,9 +19,9 @@ export class HeaderComponent implements OnInit {
   currentLanguage: Language = 'ru';
   showLanguageMenu: boolean = false;
   languages = [
-    { code: 'ru' as Language, name: 'Русский', flag: '🇷🇺' },
-    { code: 'en' as Language, name: 'English', flag: '🇬🇧' },
-    { code: 'kk' as Language, name: 'Қазақша', flag: '🇰🇿' }
+    { code: 'ru' as Language, name: 'Русский', flag: 'RU' },
+    { code: 'en' as Language, name: 'English', flag: 'EN' },
+    { code: 'kk' as Language, name: 'Қазақша', flag: 'KZ' }
   ];
 
   constructor(private router: Router, private authService: AuthService, public translationService: TranslationService) {}

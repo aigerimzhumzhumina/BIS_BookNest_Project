@@ -20,10 +20,86 @@ export class SearchComponent implements OnInit {
   showFilters: boolean = false;
   
   // Доступные фильтры
-  availableGenres: string[] = [];
-  availableTropes: string[] = [];
-  availableCountries: string[] = [];
-  availableAuthors: string[] = [];
+  availableGenres: string[] = [
+    "Fantasy",
+    "Science Fiction",
+    "Mystery",
+    "Thriller",
+    "Romance",
+    "Historical Fiction",
+    "Horror",
+    "Adventure",
+    "Drama",
+    "Poetry",
+    "Biography",
+    "Autobiography",
+    "Self-Help",
+    "Philosophy",
+    "Young Adult",
+    "Children's Literature",
+    "Non-Fiction",
+    "Graphic Novel"
+  ];
+  availableTropes: string[] = [
+    "Enemies to Lovers",
+    "Friends to Lovers",
+    "Chosen One",
+    "Coming of Age",
+    "Love Triangle",
+    "Slow Burn",
+    "Forbidden Love",
+    "Found Family",
+    "Good vs Evil",
+    "Redemption Arc",
+    "Fish Out of Water",
+    "Unreliable Narrator",
+    "Hero’s Journey",
+    "Rags to Riches",
+    "Second Chance",
+    "Secret Identity",
+    "Mentor and Student",
+    "Betrayal"
+  ];
+  availableCountries: string[] = [
+    "Kazakhstan",
+    "United States",
+    "United Kingdom",
+    "Canada",
+    "Australia",
+    "Germany",
+    "France",
+    "Italy",
+    "Spain",
+    "Japan",
+    "China",
+    "South Korea",
+    "India",
+    "Brazil",
+    "Mexico",
+    "Argentina",
+    "Turkey",
+    "South Africa"];
+  availableAuthors: string[] = [
+    "Mukhtar Auezov",
+    "Abai Kunanbayev",
+    "William Shakespeare",
+    "Jane Austen",
+    "Charles Dickens",
+    "Leo Tolstoy",
+    "Fyodor Dostoevsky",
+    "George Orwell",
+    "J.K. Rowling",
+    "J.R.R. Tolkien",
+    "Agatha Christie",
+    "Mark Twain",
+    "Ernest Hemingway",
+    "Franz Kafka",
+    "Haruki Murakami",
+    "Stephen King",
+    "Gabriel Garcia Marquez",
+    "Virginia Woolf",
+    "Oscar Wilde"
+  ];
   availableYears: number[] = [];
   availableAgeRatings: string[] = ['0+', '6+', '12+', '16+', '18+'];
   

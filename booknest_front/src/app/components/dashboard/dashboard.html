@@ -17,17 +17,22 @@
         </div>
 
         <div class="profile-card">
-        <!----  <div class="avatar-section">
+          <div class="avatar-section">
             <img [src]="isEditMode ? editUser.avatar : currentUser.avatar" 
                  [alt]="currentUser.username" 
-                 class="avatar">
+                 class="avatar"
+                 (error)="onImageError($event)">
             @if (isEditMode) {
               <label class="avatar-upload">
-                <input type="file" accept="image/*" (change)="onAvatarChange($event)">
-                <span>Change photo</span>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  (change)="onAvatarChange($event)"
+                  #fileInput>
+                <span>{{ 'dashboard.changePhoto' | translate }}</span>
               </label>
             }
-          </div> --->
+          </div>
           
 
           <div class="profile-info">
@@ -50,7 +55,7 @@
                   <input type="text" [(ngModel)]="editUser.city" class="form-input">
                 </div>
                 <div class="form-group">
-                  <label>{{ 'dashboard.bio' | translate }}</label>
+                  <label>{{ 'dashboard.aboutMe' | translate }}</label>
                   <textarea [(ngModel)]="editUser.bio" class="form-textarea" rows="4"></textarea>
                 </div>
                 <button class="btn-save" (click)="saveProfile()">
@@ -76,14 +81,14 @@
                     </div>
                   }
                   <div class="info-item">
-                    <span class="info-label">{{ 'dashboard.joinedDate' | translate }}:</span>
+                    <span class="info-label">{{ 'dashboard.onSiteSince' | translate }}</span>
                     <span class="info-value">{{ currentUser.joined_date }}</span>
                   </div>
                 </div>
 
                 @if (currentUser.bio) {
                   <div class="bio">
-                    <h3>{{ 'dashboard.bio' | translate }}</h3>
+                    <h3>{{ 'dashboard.aboutMe' | translate }}</h3>
                     <p>{{ currentUser.bio }}</p>
                   </div>
                 }

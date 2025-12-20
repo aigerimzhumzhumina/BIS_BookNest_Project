@@ -137,21 +137,56 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  /*
+
   onAvatarChange(event: any): void {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.editUser.avatar = e.target.result;
-      };
-      reader.readAsDataURL(file);
-      
-      // Здесь также нужно отправить файл на бэкенд
-      // Например: this.apiService.uploadAvatar(file).subscribe(...)
-    }
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please, select a valid image file.');
+      return;
   }
-  */
+    const maxSize = 5 * 1024 * 1024; // 5MB в байтах
+    if (file.size > maxSize) {
+      alert('The selected file is too large. Maximum size is 5MB.');
+      return;
+    }
+
+    // Показываем preview локально (для мгновенной обратной связи)
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      // Временно показываем локальный preview
+      if (this.editUser) {
+        this.editUser.avatar = e.target.result;
+      }
+    };
+    reader.readAsDataURL(file);
+    
+    // Загружаем на сервер
+    this.apiService.uploadAvatar(file).subscribe({
+      next: (response) => {
+        console.log('Avatar uploaded successfully:', response);
+        // Обновляем с URL от сервера
+        if (this.currentUser && this.editUser) {
+          this.currentUser.avatar = response.avatar_url;
+          this.editUser.avatar = response.avatar_url;
+        }
+      },
+      error: (error) => {
+        console.error('Error uploading avatar:', error);
+        alert('Error uploading avatar. Please try again.');
+        // Возвращаем старый аватар в случае ошибки
+        if (this.currentUser && this.editUser) {
+          this.editUser.avatar = this.currentUser.avatar;
+        }
+      }
+    });
+  }
+
+  onImageError(event: any): void {
+    // Если изображение не загрузилось, показываем placeholder
+    event.target.src = 'assets/avatars/default-avatar.png';
+  }
+  
   continueReading(): void {
     if (this.currentBook) {
       this.router.navigate(['/book', this.currentBook.id]);
