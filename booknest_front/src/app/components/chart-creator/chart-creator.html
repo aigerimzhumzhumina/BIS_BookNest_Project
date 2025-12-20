@@ -7,13 +7,13 @@
         class="tab-button" 
         [class.active]="activeTab === 'create'"
         (click)="switchTab('create')">
-        + Create Chart
+        {{ 'chart.createNew' | translate }}
       </button>
       <button 
         class="tab-button" 
         [class.active]="activeTab === 'manage'"
         (click)="switchTab('manage')">
-        My charts: ({{ userCharts.length }})
+        {{ 'chart.myCharts' | translate }}: ({{ userCharts.length }})
       </button>
     </div>
 
@@ -22,50 +22,50 @@
       <div class="create-chart-section">
         <h1>
           @if (editingChartId) {
-            <span>Edit Chart</span>
+            <span>{{ 'chart.editTitle' | translate }}</span>
           } @else {
-            <span>Create New Chart</span>
+            <span>{{ 'chart.createNewTitle' | translate }}</span>
           }
         </h1>
         <p class="section-description">
-          Create your personal book chart — collect your favorite books into one collection
+          {{ 'chart.description' | translate }}
         </p>
 
         <div class="chart-form">
           <!-- Cover Upload -->
           <div class="cover-upload-section">
-            <label class="cover-label">Chart Cover</label>
+            <label class="cover-label">{{ 'chart.coverLabel' | translate }}</label>
             <div class="cover-preview-wrapper">
               @if (chartCoverPreview) {
                 <img [src]="chartCoverPreview" alt="Chart cover" class="cover-preview">
               } @else {
                 <div class="cover-placeholder">
                   <span class="placeholder-icon">🖼️</span>
-                  <span class="placeholder-text">Upload cover image</span>
+                  <span class="placeholder-text">{{ 'chart.uploadCover' | translate }}</span>
                 </div>
               }
               <label class="cover-upload-btn">
                 <input type="file" accept="image/*" (change)="onCoverChange($event)">
-                <span>Choose Image</span>
+                <span>{{ 'chart.selectImage' | translate }}</span>
               </label>
             </div>
           </div>
 
           <!-- Chart Info -->
           <div class="form-group">
-            <label>Chart Title *</label>
+            <label>{{ 'chart.titleLabel' | translate }} *</label>
             <input 
               type="text" 
               [(ngModel)]="chartTitle" 
-              placeholder="Example: Top Sci-Fi Books"
+              placeholder="{{ 'chart.titlePlaceholder' | translate }}"
               class="form-input">
           </div>
 
           <div class="form-group">
-            <label>Description</label>
+            <label>{{ 'chart.descriptionLabel' | translate }}</label>
             <textarea 
               [(ngModel)]="chartDescription" 
-              placeholder="Tell us about your chart..."
+              placeholder="{{ 'chart.descriptionPlaceholder' | translate }}"
               class="form-textarea"
               rows="4"></textarea>
           </div>
@@ -73,16 +73,16 @@
           <div class="form-group checkbox-group">
             <label class="checkbox-label">
               <input type="checkbox" [(ngModel)]="isPublic">
-              <span>Make chart public (other users will be able to see it)</span>
+              <span>{{ 'chart.makePublic' | translate }}</span>
             </label>
           </div>
 
           <!-- Books Selection -->
           <div class="books-selection-section">
             <div class="books-header">
-              <h3>Books in chart ({{ selectedBooks.length }})</h3>
+              <h3>{{ 'chart.booksInChart' | translate }} ({{ selectedBooks.length }})</h3>
               <button class="btn-add-book" (click)="toggleBookSearch()">
-                + Add book
+                {{ 'chart.addBook' | translate }}
               </button>
             </div>
 
@@ -93,14 +93,14 @@
                     type="text" 
                     [(ngModel)]="searchQuery" 
                     (input)="searchBooks()"
-                    placeholder="Search for books..."
+                    placeholder="{{ 'chart.searchBook' | translate }}"
                     class="search-input">
                 </div>
 
                 @if (isSearching) {
                   <div class="search-loading">
                     <div class="small-spinner"></div>
-                    <span>Searching...</span>
+                    <span>{{ 'chart.searching' | translate }}</span>
                   </div>
                 } @else if (searchResults.length > 0) {
                   <div class="search-results">
@@ -134,7 +134,7 @@
               </div>
             } @else {
               <div class="empty-books-state">
-                <p>Add books to your chart</p>
+                <p>{{ 'chart.addBooksToChart' | translate }}</p>
               </div>
             }
           </div>
@@ -146,15 +146,15 @@
               (click)="createChart()"
               [disabled]="isSaving || !chartTitle.trim()">
               @if (isSaving) {
-                <span>Saving...</span>
+                <span>{{ 'chart.saving' | translate }}</span>
               } @else if (editingChartId) {
-                <span>💾 Save changes</span>
+                <span>{{ 'chart.saveChanges' | translate }}</span>
               } @else {
-                <span>✨ Create chart</span>
+                <span>{{ 'chart.save' | translate }}</span>
               }
             </button>
             <button class="btn-reset" (click)="resetForm()">
-              Reset
+              {{ 'chart.reset' | translate }}
             </button>
           </div>
         </div>
@@ -164,8 +164,8 @@
     <!-- Manage Charts Tab -->
     @if (activeTab === 'manage') {
       <div class="manage-charts-section">
-        <h1>My charts</h1>
-        <p class="section-description">Manage your book collections</p>
+        <h1>{{ 'chart.manageTitle' | translate }}</h1>
+        <p class="section-description">{{ 'chart.manageDescription' | translate }}</p>
 
         @if (userCharts.length > 0) {
           <div class="charts-grid">
@@ -190,9 +190,9 @@
                     <p class="chart-description">{{ chart.description }}</p>
                   }
                   <div class="chart-meta">
-                    <span class="book-count">✦ {{ chart.books.length }} books</span>
+                    <span class="book-count">✦ {{ chart.books.length }} {{ 'chart.books' | translate }}</span>
                     @if (chart.is_public) {
-                      <span class="public-badge">Public</span>
+                      <span class="public-badge">{{ 'chart.public' | translate }}</span>
                     }
                   </div>
                 </div>
@@ -202,10 +202,10 @@
         } @else {
           <div class="empty-state">
             <div class="empty-icon">✦</div>
-            <h2>You don't have any charts yet</h2>
-            <p>Create your first book collection</p>
+            <h2>{{ 'chart.noCharts' | translate }}</h2>
+            <p>{{ 'chart.createFirst' | translate }}</p>
             <button class="btn-primary" (click)="switchTab('create')">
-              + Create chart
+              {{ 'chart.createNew' | translate }}
             </button>
           </div>
         }

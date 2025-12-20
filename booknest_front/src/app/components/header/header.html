@@ -1,8 +1,8 @@
 <header class="main-header">
   <div class="header-container">
     <div class="logo-section" routerLink="/">
-      <img src="assets/logo.png" alt="BookNest Logo" class="logo">
-      <span class="site-name">BookNest</span>
+      <img src="assets/logo.png" alt="BookReader Logo" class="logo">
+      <span class="site-name">BookReader</span>
     </div>
 
     @if (showSearch) {
@@ -12,18 +12,39 @@
             <circle cx="11" cy="11" r="8"></circle>
             <path d="m21 21-4.35-4.35"></path>
           </svg>
-          <input type="text" placeholder="Book search" readonly>
+          <input type="text" [placeholder]="'header.search' | translate" readonly>
         </div>
       </div>
     }
 
     <nav class="nav-section">
+      <!-- Language Selector -->
+      <div class="language-selector">
+        <button class="language-btn" (click)="toggleLanguageMenu()">
+          <span class="language-flag">{{ getCurrentLanguageFlag() }}</span>
+        </button>
+        
+        @if (showLanguageMenu) {
+          <div class="language-menu">
+            @for (lang of languages; track lang.code) {
+              <button 
+                class="language-option"
+                [class.active]="lang.code === currentLanguage"
+                (click)="changeLanguage(lang.code)">
+                <span class="lang-flag">{{ lang.flag }}</span>
+                <span class="lang-name">{{ lang.name }}</span>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
       @if (isLoggedIn) {
-        <a routerLink="/dashboard" class="nav-link">Profile</a>
-        <a routerLink="/create-chart" class="nav-link">Create chart</a>
-        <button (click)="logout()" class="btn-logout">Log out</button>
+        <a routerLink="/dashboard" class="nav-link">{{ 'header.profile' | translate }}</a>
+        <a routerLink="/create-chart" class="nav-link">{{ 'header.createChart' | translate }}</a>
+        <button (click)="logout()" class="btn-logout">{{ 'header.logout' | translate }}</button>
       } @else {
-        <button routerLink="/login" class="btn-login">Log in</button>
+        <button routerLink="/login" class="btn-login">{{ 'header.login' | translate }}</button>
       }
     </nav>
   </div>

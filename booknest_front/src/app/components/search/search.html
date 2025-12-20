@@ -3,7 +3,7 @@
 <div class="search-container">
   <div class="search-header">
     <div class="search-main">
-      <h1>Book search</h1>
+      <h1>{{ 'search.title' | translate }}</h1>
       <div class="search-input-wrapper">
         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <circle cx="11" cy="11" r="8"></circle>
@@ -13,26 +13,26 @@
           type="text" 
           [(ngModel)]="searchQuery" 
           (input)="onSearchInput()"
-          placeholder="Enter book title or author..."
+          placeholder="{{ 'search.placeholder' | translate }}"
           class="search-input">
       </div>
     </div>
 
     <div class="search-controls">
       <button class="btn-filters" (click)="toggleFiltersPanel()">
-        <span>Filters</span>
+        <span>{{ 'search.filters' | translate }}</span>
         @if (selectedGenres.length + selectedTropes.length + selectedCountries.length > 0) {
           <span class="filter-badge">{{ selectedGenres.length + selectedTropes.length + selectedCountries.length }}</span>
         }
       </button>
       
       <div class="sort-controls">
-        <label>Sort by:</label>
+        <label>{{ 'search.sort' | translate }}:</label>
         <select [(ngModel)]="sortBy" (change)="onSortChange()" class="sort-select">
-          <option value="rating">By rating</option>
-          <option value="title">By title</option>
-          <option value="year">By year</option>
-          <option value="pages">By pages</option>
+          <option value="rating">{{ 'search.sortRating' | translate }}</option>
+          <option value="title">{{ 'search.sortTitle' | translate }}</option>
+          <option value="year">{{ 'search.sortYear' | translate }}</option>
+          <option value="pages">{{ 'search.sortPages' | translate }}</option>
         </select>
       </div>
     </div>
@@ -43,14 +43,14 @@
     @if (showFilters) {
       <aside class="filters-sidebar">
         <div class="filters-header">
-          <h2>Filters</h2>
-          <button class="btn-clear" (click)="clearAllFilters()">Clear all</button>
+          <h2>{{ 'search.filters' | translate }}</h2>
+          <button class="btn-clear" (click)="clearAllFilters()">{{ 'search.clearAll' | translate }}</button>
         </div>
 
         <div class="filters-list">
           <!-- Genres -->
           <div class="filter-group">
-            <h3>Genres</h3>
+            <h3>{{ 'search.genres' | translate }}</h3>
             <div class="filter-options">
               @for (genre of availableGenres; track genre) {
                 <label class="filter-checkbox">
@@ -66,7 +66,7 @@
 
           <!-- Tropes -->
           <div class="filter-group">
-            <h3>Tropes</h3>
+            <h3>{{ 'search.tropes' | translate }}</h3>
             <div class="filter-options">
               @for (trope of availableTropes; track trope) {
                 <label class="filter-checkbox">
@@ -82,7 +82,7 @@
 
           <!-- Countries -->
           <div class="filter-group">
-            <h3>Country</h3>
+            <h3>{{ 'search.country' | translate }}</h3>
             <div class="filter-options">
               @for (country of availableCountries; track country) {
                 <label class="filter-checkbox">
@@ -98,7 +98,7 @@
 
           <!-- Authors -->
           <div class="filter-group">
-            <h3>Author</h3>
+            <h3>{{ 'search.author' | translate }}</h3>
             <div class="filter-options">
               @for (author of availableAuthors; track author) {
                 <label class="filter-checkbox">
@@ -114,7 +114,7 @@
 
           <!-- Age Rating -->
           <div class="filter-group">
-            <h3>Age Rating</h3>
+            <h3>{{ 'search.ageRating' | translate }}</h3>
             <div class="filter-options">
               @for (rating of availableAgeRatings; track rating) {
                 <label class="filter-checkbox">
@@ -130,40 +130,40 @@
 
           <!-- Year Range -->
           <div class="filter-group">
-            <h3>Year of publication</h3>
+            <h3>{{ 'search.yearPublished' | translate }}</h3>
             <div class="range-inputs">
               <input 
                 type="number" 
                 [(ngModel)]="yearFrom" 
                 (change)="searchBooks()"
-                placeholder="From"
+                placeholder="{{ 'search.from' | translate }}"
                 class="range-input">
               <span>—</span>
               <input 
                 type="number" 
                 [(ngModel)]="yearTo" 
                 (change)="searchBooks()"
-                placeholder="To"
+                placeholder="{{ 'search.to' | translate }}"
                 class="range-input">
             </div>
           </div>
 
           <!-- Pages Range -->
           <div class="filter-group">
-            <h3>Volume (number of pages)</h3>
+            <h3>{{ 'search.pagesVolume' | translate }}</h3>
             <div class="range-inputs">
               <input 
                 type="number" 
                 [(ngModel)]="pagesFrom" 
                 (change)="searchBooks()"
-                placeholder="From"
+                placeholder="{{ 'search.from' | translate }}"
                 class="range-input">
               <span>—</span>
               <input 
                 type="number" 
                 [(ngModel)]="pagesTo" 
                 (change)="searchBooks()"
-                placeholder="To"
+                placeholder="{{ 'search.to' | translate }}"
                 class="range-input">
             </div>
           </div>
@@ -176,11 +176,11 @@
       @if (isLoading) {
         <div class="loading-state">
           <div class="spinner"></div>
-          <p>Loading books</p>
+          <p>{{ 'search.loading' | translate }}</p>
         </div>
       } @else if (books.length > 0) {
         <div class="results-info">
-          <p>Found books: <strong>{{ totalBooks }}</strong></p>
+          <p>{{ 'search.booksFound' | translate }}: <strong>{{ totalBooks }}</strong></p>
         </div>
 
         <div class="books-grid">
@@ -189,7 +189,7 @@
               <div class="book-cover-wrapper">
                 <img [src]="book.cover" [alt]="book.title" class="book-cover">
                 <div class="book-overlay">
-                  <span class="view-details">More info</span>
+                  <span class="view-details">{{ 'search.viewDetails' | translate }}</span>
                 </div>
               </div>
               <div class="book-info">
@@ -197,7 +197,7 @@
                 <p class="book-author">{{ book.author }}</p>
                 <div class="book-meta">
                   <span class="rating"> {{ book.rating }}</span>
-                  <span class="pages"> {{ book.pages }} стр.</span>
+                  <span class="pages"> {{ book.pages }} {{ 'search.pages' | translate }}</span>
                 </div>
               </div>
             </div>
@@ -211,23 +211,23 @@
               class="btn-page" 
               (click)="previousPage()" 
               [disabled]="currentPage === 1">
-               Back
+               {{ 'search.previous' | translate }}
             </button>
-            <span class="page-info">Page {{ currentPage }} of {{ totalPages }}</span>
+            <span class="page-info">{{ 'search.pages' | translate }} {{ currentPage }} of {{ totalPages }}</span>
             <button 
               class="btn-page" 
               (click)="nextPage()" 
               [disabled]="currentPage === totalPages">
-              Next →
+              {{ 'search.next' | translate }} →
             </button>
           </div>
         }
       } @else {
         <div class="empty-state">
           <div class="empty-icon">!</div>
-          <h2>Books not found</h2>
-          <p>Try changing the search parameters</p>
-          <button class="btn-primary" (click)="clearAllFilters()">Reset filters</button>
+          <h2>{{ 'search.noBooksFound' | translate }}</h2>
+          <p>{{ 'search.tryChanging' | translate }}</p>
+          <button class="btn-primary" (click)="clearAllFilters()">{{ 'search.resetFilters' | translate }}</button>
         </div>
       }
     </main>

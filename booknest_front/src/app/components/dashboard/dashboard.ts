@@ -6,13 +6,13 @@ import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../header/header";
 import { Book } from '../../services/book';
-
+import { TranslatePipe } from '../../pipes/translate-pipe';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent]
+  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent, TranslatePipe]
 })
 export class DashboardComponent implements OnInit {
   currentUser: UserProfile | null = null;

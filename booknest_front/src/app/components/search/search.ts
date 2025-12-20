@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { ApiService, Book, SearchFilters } from '../../services/api';
 import { HeaderComponent } from "../header/header";
-
+import { TranslatePipe } from '../../pipes/translate-pipe';
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe],
   templateUrl: './search.html',
   styleUrl: './search.css',
 })

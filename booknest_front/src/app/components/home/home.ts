@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderComponent } from "../header/header";
-
+import { TranslatePipe } from '../../pipes/translate-pipe';
 interface BookCollection {
   id: number;
   title: string;
@@ -20,7 +20,7 @@ interface Book {
 
 @Component({
   selector: 'app-home',
-  imports: [HeaderComponent],
+  imports: [HeaderComponent, TranslatePipe],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

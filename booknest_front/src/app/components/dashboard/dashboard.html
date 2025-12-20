@@ -6,12 +6,12 @@
       <!-- User Profile Section -->
       <section class="profile-section">
         <div class="profile-header">
-          <h1>My profile</h1>
+          <h1>{{ 'dashboard.myProfile' | translate }}</h1>
           <button class="btn-edit" (click)="toggleEditMode()">
             @if (isEditMode) {
-              <span>Cancel</span>
+              <span>{{ 'dashboard.cancel' | translate }}</span>
             } @else {
-              <span>Edit</span>
+              <span>{{ 'dashboard.edit' | translate }}</span>
             }
           </button>
         </div>
@@ -34,27 +34,27 @@
             @if (isEditMode) {
               <div class="edit-form">
                 <div class="form-group">
-                  <label>Username</label>
+                  <label>{{ 'dashboard.username' | translate }}</label>
                   <input type="text" [(ngModel)]="editUser.username" class="form-input">
                 </div>
                 <div class="form-group">
-                  <label>Email</label>
+                  <label>{{ 'dashboard.email' | translate }}</label>
                   <input type="email" [(ngModel)]="editUser.email" class="form-input">
                 </div>
                 <div class="form-group">
-                  <label>Age</label>
+                  <label>{{ 'dashboard.age' | translate }}</label>
                   <input type="number" [(ngModel)]="editUser.age" class="form-input">
                 </div>
                 <div class="form-group">
-                  <label>City</label>
+                  <label>{{ 'dashboard.city' | translate }}</label>
                   <input type="text" [(ngModel)]="editUser.city" class="form-input">
                 </div>
                 <div class="form-group">
-                  <label>About me</label>
+                  <label>{{ 'dashboard.bio' | translate }}</label>
                   <textarea [(ngModel)]="editUser.bio" class="form-textarea" rows="4"></textarea>
                 </div>
                 <button class="btn-save" (click)="saveProfile()">
-                  Save changes
+                  {{ 'dashboard.saveChanges' | translate }}
                 </button>
               </div>
             } @else {
@@ -65,25 +65,25 @@
                 <div class="info-grid">
                   @if (currentUser.age) {
                     <div class="info-item">
-                      <span class="info-label">Age:</span>
+                      <span class="info-label">{{ 'dashboard.age' | translate }}:</span>
                       <span class="info-value">{{ currentUser.age }} лет</span>
                     </div>
                   }
                   @if (currentUser.city) {
                     <div class="info-item">
-                      <span class="info-label">City:</span>
+                      <span class="info-label">{{ 'dashboard.city' | translate }}:</span>
                       <span class="info-value">{{ currentUser.city }}</span>
                     </div>
                   }
                   <div class="info-item">
-                    <span class="info-label">On site since:</span>
+                    <span class="info-label">{{ 'dashboard.joinedDate' | translate }}:</span>
                     <span class="info-value">{{ currentUser.joined_date }}</span>
                   </div>
                 </div>
 
                 @if (currentUser.bio) {
                   <div class="bio">
-                    <h3>About me</h3>
+                    <h3>{{ 'dashboard.bio' | translate }}</h3>
                     <p>{{ currentUser.bio }}</p>
                   </div>
                 }
@@ -95,7 +95,7 @@
 
       <!-- Current Reading Section -->
       <section class="reading-section">
-        <h2 class="section-title">Currently reading</h2>
+        <h2 class="section-title">{{ 'dashboard.currentlyReading' | translate }}</h2>
         @if (currentBook) {
           <div class="current-book-card">
             <img [src]="currentBook.book.cover" [alt]="currentBook.book.title" class="book-cover">
@@ -105,7 +105,7 @@
               
               <div class="progress-info">
                 <div class="progress-text">
-                  <span>Page {{ currentBook.current_page }} of {{ currentBook.total_pages }}</span>
+                  <span>{{ 'dashboard.page' | translate }} {{ currentBook.current_page }} {{ 'dashboard.of' | translate }} {{ currentBook.total_pages }}</span>
                   <span class="progress-percent">{{ currentBook.progress }}%</span>
                 </div>
                 <div class="progress-bar">
@@ -114,21 +114,21 @@
               </div>
               
               <button class="btn-continue" (click)="continueReading()">
-                Continue reading
+                {{ 'dashboard.continueReading' | translate }}
               </button>
             </div>
           </div>
         } @else {
           <div class="empty-state">
-            <p>You haven't started reading any books yet</p>
-            <button class="btn-primary" routerLink="/search">Find a book</button>
+            <p>{{ 'dashboard.noCurrentBook' | translate }}</p>
+            <button class="btn-primary" routerLink="/search">{{ 'dashboard.findBook' | translate }}</button>
           </div>
         }
       </section>
 
       <!-- Favorite Books Section -->
       <section class="favorites-section">
-        <h2 class="section-title">Favorites ({{ favoriteBooks.length }})</h2>
+        <h2 class="section-title">{{ 'dashboard.favorites' | translate }} ({{ favoriteBooks.length }})</h2>
         @if (favoriteBooks.length > 0) {
           <div class="favorites-grid">
             @for (book of favoriteBooks; track book.id) {
@@ -146,8 +146,8 @@
           </div>
         } @else {
           <div class="empty-state">
-            <p>You don't have any favorite books yet</p>
-            <button class="btn-primary" routerLink="/search">Find books</button>
+            <p>{{ 'dashboard.noFavorites' | translate }}</p>
+            <button class="btn-primary" routerLink="/search">{{ 'dashboard.findBooks' | translate }}</button>
           </div>
         }
       </section>

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ApiService, Book } from '../../services/api';
 import { HeaderComponent } from "../header/header";
-
+import { TranslatePipe } from '../../pipes/translate-pipe';
 interface Comment {
   id: number;
   user: {
@@ -19,7 +19,7 @@ interface Comment {
 @Component({
   selector: 'app-book-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe],
   templateUrl: './book-details.html',
   styleUrl: './book-details.css',
 })

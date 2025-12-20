@@ -4,11 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ApiService, Book, Chart } from '../../services/api';
 import { HeaderComponent } from "../header/header";
-
+import { TranslatePipe } from '../../pipes/translate-pipe';
 @Component({
   selector: 'app-chart-creator',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe],
   templateUrl: './chart-creator.html',
   styleUrls: ['./chart-creator.css']
 })

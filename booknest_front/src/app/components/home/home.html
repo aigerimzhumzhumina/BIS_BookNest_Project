@@ -4,12 +4,12 @@
   <!-- Hero Section -->
   <section class="hero-section">
     <div class="hero-content">
-      <h1 class="hero-title">Welcome to BookNest!</h1>
+      <h1 class="hero-title">{{ 'home.title' | translate }}</h1>
       <p class="hero-subtitle">
-        Your personal library at your fingertips. Read, discover, and share books with millions of readers around the world.
+        {{ 'home.subtitle' | translate }}
       </p>
       <button class="btn-primary" (click)="navigateToRegister()">
-        Start reading for free
+        {{ 'home.startReading' | translate }}
       </button>
     </div>
     <div class="hero-image">
@@ -19,41 +19,41 @@
 
   <!-- Features Section -->
   <section class="features-section">
-    <h2 class="section-title">Why BookNest?</h2>
+    <h2 class="section-title">{{ 'home.whyBookNest' | translate }}</h2>
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">1</div>
-        <h3>Massive Library</h3>
-        <p>Thousands of books in various genres for every taste</p>
+        <h3>{{ 'home.feature1Title' | translate }}</h3>
+        <p>{{ 'home.feature1Desc' | translate }}</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">2</div>
-        <h3>Personalization</h3>
-        <p>Create your own collections and get recommendations</p>
+        <h3>{{ 'home.feature2Title' | translate }}</h3>
+        <p>{{ 'home.feature2Desc' | translate }}</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">3</div>
-        <h3>Smart Search</h3>
-        <p>Advanced filters for quick search of the needed book</p>
+        <h3>{{ 'home.feature3Title' | translate }}</h3>
+        <p>{{ 'home.feature3Desc' | translate }}</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">4</div>
-        <h3>Autosave</h3>
-        <p>Continue reading from where you left off</p>
+        <h3>{{ 'home.feature4Title' | translate }}</h3>
+        <p>{{ 'home.feature4Desc' | translate }}</p>
       </div>
     </div>
   </section>
 
   <!-- Collections Section -->
   <section class="collections-section">
-    <h2 class="section-title">Popular Collections</h2>
+    <h2 class="section-title">{{ 'home.popularCollections' | translate }}</h2>
     <div class="collections-grid">
       @for (collection of collections; track collection.id) {
         <div class="collection-card" (click)="openCollection(collection)">
           <div class="collection-image">
             <img [src]="collection.image" [alt]="collection.title">
             <div class="collection-overlay">
-              <span class="view-collection">View Collection →</span>
+              <span class="view-collection">{{ 'home.viewCollection' | translate }} →</span>
             </div>
           </div>
           <div class="collection-info">
@@ -67,10 +67,10 @@
 
   <!-- Call to Action -->
   <section class="cta-section">
-    <h2>Ready to start your reading journey?</h2>
-    <p>Join thousands of readers today</p>
+    <h2>{{ 'home.ctaTitle' | translate }}</h2>
+    <p>{{ 'home.joinThousands' | translate }}</p>
     <button class="btn-primary" (click)="navigateToRegister()">
-      Register for free
+      {{ 'home.registerFree' | translate }}
     </button>
   </section>
 </div>
@@ -90,7 +90,7 @@
               <h4>{{ book.title }}</h4>
               <p>{{ book.author }}</p>
               <div class="rating">
-                <span class="star">*</span>
+                <span class="star">★</span>
                 <span>{{ book.rating }}</span>
               </div>
             </div>
