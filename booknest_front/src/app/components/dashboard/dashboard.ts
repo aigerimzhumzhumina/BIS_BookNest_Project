@@ -15,12 +15,16 @@ import { Book } from '../../services/book';
   imports: [CommonModule, RouterModule, FormsModule, HeaderComponent]
 })
 export class DashboardComponent implements OnInit {
-  currentUser: User | null = null;
+  currentUser: UserProfile | null = null;
   currentBook: CurrentBook | null = null;
   favoriteBooks: FavoriteBook[] = [];
   favouriteBook: Book | null = null;
   isEditMode: boolean = false;
+  isLoadingProfile: boolean = true;
+  isLoadingCurrentBook: boolean = true;
+  isLoadingFavorites: boolean = true;
   editUser: Partial<User> = {};
+
 
   constructor(private authService: AuthService, private router: Router, private apiService: ApiService) {}
 
@@ -30,24 +34,72 @@ export class DashboardComponent implements OnInit {
     this.loadFavoriteBooks();
   }
   loadUserData(): void {
+    this.isLoadingProfile = true;
+    
     this.apiService.getUserProfile().subscribe({
-      next: profile => this.currentUser = profile,
-      error: err => console.error('Profile load error', err)
+      next: (profile) => {
+        this.currentUser = {
+          id: profile.id,
+          username: profile.username,
+          email: profile.email,
+          avatar: profile.avatar || 'assets/avatars/default-avatar.png',
+          age: profile.age,
+          city: profile.city,
+          bio: profile.bio,
+          joined_date: profile.joined_date
+        };
+        this.editUser = { ...this.currentUser };
+        this.isLoadingProfile = false;
+      },
+      error: (error) => {
+        console.error('Error loading profile:', error);
+        
+        // Если профиль не найден, создаем шаблонный
+        const currentUser = this.authService.currentUserValue;
+        if (currentUser) {
+          this.currentUser = {
+            id: currentUser.id || 0,
+            username: currentUser.username,
+            email: currentUser.email,
+            avatar: 'assets/avatars/default-avatar.png',
+            joined_date: new Date().toISOString().split('T')[0]
+          };
+          this.editUser = { ...this.currentUser };
+        }
+        this.isLoadingProfile = false;
+      }
     });
-    this.editUser = { ...this.currentUser };
   }
 
   loadCurrentBook(): void {
+    this.isLoadingCurrentBook = true;
+    
     this.apiService.getCurrentBook().subscribe({
-      next: bookOrNull => this.currentBook = bookOrNull,
-      error: err => console.error('Current book load error', err)
+      next: (book) => {
+        this.currentBook = book;
+        this.isLoadingCurrentBook = false;
+      },
+      error: (error) => {
+        console.error('Error loading current book:', error);
+        this.currentBook = null;
+        this.isLoadingCurrentBook = false;
+      }
     });
   }
 
   loadFavoriteBooks(): void {
+    this.isLoadingFavorites = true;
+    
     this.apiService.getFavoriteBooks().subscribe({
-      next: favs => this.favoriteBooks = favs,
-      error: err => console.error('Favorite books load error', err)
+      next: (favorites) => {
+        this.favoriteBooks = favorites;
+        this.isLoadingFavorites = false;
+      },
+      error: (error) => {
+        console.error('Error loading favorites:', error);
+        this.favoriteBooks = [];
+        this.isLoadingFavorites = false;
+      }
     });
   }
 
@@ -60,11 +112,27 @@ export class DashboardComponent implements OnInit {
   }
 
   saveProfile(): void {
+    if (!this.currentUser) return;
+    
+    // Отправка обновленных данных на бэкенд
     this.apiService.updateUserProfile(this.editUser).subscribe({
-      next: updatedProfile => {
-        this.currentUser = updatedProfile;
+      next: (updatedProfile) => {
+        this.currentUser = {
+          ...this.currentUser!,
+          username: updatedProfile.username,
+          email: updatedProfile.email,
+          avatar: updatedProfile.avatar || this.currentUser!.avatar,
+          age: updatedProfile.age,
+          city: updatedProfile.city,
+          bio: updatedProfile.bio,
+          joined_date: updatedProfile.joined_date
+        };
         this.isEditMode = false;
-        console.log('Profile updated successfully', this.editUser);
+        console.log('User profile updated successfully!');
+      },
+      error: (error) => {
+        console.error('Error saving profile:', error);
+        alert('Error saving profile. Please try again.');
       }
     });
   }
@@ -97,10 +165,13 @@ export class DashboardComponent implements OnInit {
   removeFromFavorites(bookId: number): void {
     this.apiService.removeFromFavorites(bookId).subscribe({
       next: () => {
-        console.log(`Book with ID ${bookId} removed from favorites`);
-        this.favoriteBooks = this.favoriteBooks.filter(book => book.id !== bookId);
+        this.favoriteBooks = this.favoriteBooks.filter(fav => fav.book.id !== bookId);
+        console.log('Removed from favorites');
+      },
+      error: (error) => {
+        console.error('Error removing from favorites:', error);
       }
-      });
+    });
   }
 
   logout(): void {
