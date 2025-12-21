@@ -11,7 +11,11 @@
       <!-- Book Header Section -->
       <section class="book-header">
         <div class="book-cover-section">
-          <img [src]="book.cover" [alt]="book.title" class="book-cover-large">
+          <img 
+            [src]="book.cover | mediaUrl" 
+            [alt]="book.title" 
+            class="book-cover-large"
+            (error)="onImageError($event)">
         </div>
 
         <div class="book-main-info">

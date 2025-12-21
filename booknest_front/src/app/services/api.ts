@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { TranslationService } from './translation';
 
 export interface Book {
   id: number;
@@ -82,8 +83,13 @@ export interface SearchFilters {
 })
 export class ApiService {
   private apiUrl = 'http://localhost:8000/api';
+  private mediaUrl = 'http://localhost:8000';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private translationService: TranslationService) {}
+
+  private getLanguageParam(): string {
+    return this.translationService.currentLanguage;
+  }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
@@ -182,7 +188,8 @@ export class ApiService {
   getBooks(page: number = 1, pageSize: number = 20): Observable<{ books: Book[], total: number }> {
     const params = new HttpParams()
       .set('page', page.toString())
-      .set('page_size', pageSize.toString());
+      .set('page_size', pageSize.toString())
+      .set('lang', this.getLanguageParam());
 
     return this.http.get<{ books: Book[], total: number }>(`${this.apiUrl}/books/`, {
       params: params
@@ -198,7 +205,8 @@ export class ApiService {
   searchBooks(filters: SearchFilters, page: number = 1, pageSize: number = 20): Observable<{ books: Book[], total: number }> {
     let params = new HttpParams()
       .set('page', page.toString())
-      .set('page_size', pageSize.toString());
+      .set('page_size', pageSize.toString())
+      .set('lang', this.getLanguageParam());
 
     if (filters.query) {
       params = params.set('query', filters.query);
@@ -316,21 +324,29 @@ export class ApiService {
   // ==================== FILTERS DATA ====================
   
   getGenres(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/filters/genres/`).pipe(
-      catchError(this.handleError)
-    );
+    const params = new HttpParams()
+    .set('lang', this.getLanguageParam());
+    return this.http.get<string[]>(`${this.apiUrl}/filters/genres/`, {
+      params: params
+    }).pipe(catchError(this.handleError));
   }
 
   getTropes(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/filters/tropes/`).pipe(
-      catchError(this.handleError)
-    );
+    const params = new HttpParams()
+      .set('lang', this.getLanguageParam());
+    
+    return this.http.get<string[]>(`${this.apiUrl}/filters/tropes/`, {
+      params: params
+    }).pipe(catchError(this.handleError));
   }
 
   getCountries(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/filters/countries/`).pipe(
-      catchError(this.handleError)
-    );
+    const params = new HttpParams()
+      .set('lang', this.getLanguageParam());
+    
+    return this.http.get<string[]>(`${this.apiUrl}/filters/countries/`, {
+      params: params
+    }).pipe(catchError(this.handleError));
   }
 
   getAuthors(): Observable<string[]> {
@@ -354,5 +370,34 @@ export class ApiService {
     }, {
       headers: this.getHeaders()
     }).pipe(catchError(this.handleError));
+  }
+
+  getFullMediaUrl(relativePath: string | undefined): string {
+    if (!relativePath) {
+      return 'assets/books/placeholder-book.svg'; // fallback
+    }
+    
+    // Если путь уже полный URL
+    if (relativePath.startsWith('http://') || relativePath.startsWith('https://')) {
+      return relativePath;
+    }
+    
+    // Если путь начинается с /media или /static
+    if (relativePath.startsWith('/media') || relativePath.startsWith('/static')) {
+      return `${this.mediaUrl}${relativePath}`;
+    }
+    
+    // Если путь относительный (например, "media/books/cover.jpg")
+    if (relativePath.startsWith('media/') || relativePath.startsWith('static/')) {
+      return `${this.mediaUrl}/${relativePath}`;
+    }
+    
+    // Если это локальный путь к assets
+    if (relativePath.startsWith('assets/')) {
+      return relativePath;
+    }
+    
+    // По умолчанию считаем что это путь от /media
+    return `${this.mediaUrl}/media/${relativePath}`;
   }
 }

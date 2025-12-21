@@ -5,10 +5,11 @@ import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { ApiService, Book, Chart } from '../../services/api';
 import { HeaderComponent } from "../header/header";
 import { TranslatePipe } from '../../pipes/translate-pipe';
+import { MediaUrlPipe } from '../../pipes/media-url-pipe';
 @Component({
   selector: 'app-chart-creator',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe, MediaUrlPipe],
   templateUrl: './chart-creator.html',
   styleUrls: ['./chart-creator.css']
 })
@@ -231,5 +232,9 @@ export class ChartCreatorComponent implements OnInit {
 
   switchTab(tab: string): void {
     this.activeTab = tab;
+  }
+
+  onImageError(event: any): void {
+    event.target.src = 'assets/books/placeholder-book.svg';
   }
 }

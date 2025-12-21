@@ -5,6 +5,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ApiService, Book } from '../../services/api';
 import { HeaderComponent } from "../header/header";
 import { TranslatePipe } from '../../pipes/translate-pipe';
+import { MediaUrlPipe } from '../../pipes/media-url-pipe';
 interface Comment {
   id: number;
   user: {
@@ -19,7 +20,7 @@ interface Comment {
 @Component({
   selector: 'app-book-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe, MediaUrlPipe],
   templateUrl: './book-details.html',
   styleUrl: './book-details.css',
 })
@@ -70,6 +71,10 @@ export class BookDetailsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onImageError(event: any): void {
+    event.target.src = 'assets/books/placeholder-book.svg';
   }
 
   checkIfFavorite(bookId: number): void {

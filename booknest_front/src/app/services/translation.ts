@@ -207,6 +207,96 @@ export class TranslationService {
       en: 'Favorites',
       kk: 'Таңдаулылар'
     },
+    'dashboard.charts': {
+      ru: 'Чарты',
+      en: 'Charts',
+      kk: 'Чарттар'
+    },
+    'dashboard.createChart': {
+      ru: 'Создать чарт',
+      en: 'Create Chart',
+      kk: 'Чарт жасау'
+    },
+    'dashboard.loadChart': {
+      ru: 'Загрузка чартов...',
+      en: 'Loading Charts...',
+      kk: 'Чарттар жүктелуде...'
+    },
+    'dashboard.loadsingleChart': {
+      ru: 'Загрузка чарта...',
+      en: 'Loading Chart...',
+      kk: 'Чарт жүктелуде...'
+    },
+    'dashboard.chartBooks': {
+      ru: 'Книги в чарте:',
+      en: 'Books in Chart:',
+      kk: 'Чарттағы кітаптар:'
+    },
+    'dashboard.status': {
+      ru: 'Статус:',
+      en: 'Status:',
+      kk: 'Мәртебе:'
+    },
+    'dashboard.open': {
+      ru: 'Открыть',
+      en: 'Open',
+      kk: 'Ашу'
+    },
+    'dashboard.books': {
+      ru: 'книг',
+      en: 'books',
+      kk: 'кітаптар'
+    },
+    'dashboard.public': {
+      ru: 'Публичный',
+      en: 'Public',
+      kk: 'Жалпы'
+    },
+    'dashboard.private': {
+      ru: 'Приватный',
+      en: 'Private',
+      kk: 'Жеке'
+    },
+    'dashboard.delete': {
+      ru: 'Удалить',
+      en: 'Delete',
+      kk: 'Жою'
+    },
+    'dashboard.moreInfo': {
+      ru: 'Подробнее →',
+      en: 'View Details →',
+      kk: 'Толығырақ →'
+    },
+    'dashboard.noBooksInChart': {
+      ru: 'В этом чарте пока нет книг',
+      en: 'No books in this chart yet',
+      kk: 'Бұл чартта әлі кітап жоқ'
+    },
+    'dashboard.addBooks': {
+      ru: 'Добавить книги',
+      en: 'Add Books',
+      kk: 'Кітаптарды қосу'
+    },
+    'dashboard.chartNoFound': {
+      ru: 'Чарт не найден',
+      en: 'Chart not found',
+      kk: 'Чарт табылмады'
+    },
+    'dashboard.backToProfile': {
+      ru: 'Вернуться в профиль',
+      en: 'Back to Profile',
+      kk: 'Профильге қайту'
+    },
+    'dashboard.noCharts': {
+      ru: 'У вас пока нет чартов',
+      en: 'You have no charts yet',
+      kk: 'Сізде әлі чарттар жоқ'
+    },
+    'dashboard.createFirstChart': {
+      ru: 'Создать первый чарт',
+      en: 'Create first chart',
+      kk: 'Алғашқы чарт жасау'
+    },
     'dashboard.noFavorites': {
       ru: 'У вас пока нет избранных книг',
       en: 'You have no favorite books yet',

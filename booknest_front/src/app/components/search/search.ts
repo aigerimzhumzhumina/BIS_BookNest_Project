@@ -5,10 +5,11 @@ import { RouterModule, Router } from '@angular/router';
 import { ApiService, Book, SearchFilters } from '../../services/api';
 import { HeaderComponent } from "../header/header";
 import { TranslatePipe } from '../../pipes/translate-pipe';
+import { MediaUrlPipe } from '../../pipes/media-url-pipe';
 @Component({
   selector: 'app-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, HeaderComponent, TranslatePipe, MediaUrlPipe],
   templateUrl: './search.html',
   styleUrl: './search.css',
 })
@@ -255,5 +256,9 @@ export class SearchComponent implements OnInit {
 
   get totalPages(): number {
     return Math.ceil(this.totalBooks / this.pageSize);
+  }
+
+  onImageError(event: any): void {
+    event.target.src = 'assets/books/placeholder-book.svg';
   }
 }

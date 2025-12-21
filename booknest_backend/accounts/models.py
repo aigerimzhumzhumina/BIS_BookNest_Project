@@ -2,6 +2,60 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 
+from .utils import auto_translate
+
+class Genre(models.Model):
+    name_ru = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=100)
+    name_kk = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name_ru
+    
+    def get_name(self, language='ru'):
+        return getattr(self, f'name_{language}', self.name_ru)
+
+class Trope(models.Model):
+    name_ru = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=100)
+    name_kk = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return self.name_ru
+    
+    def get_name(self, language='ru'):
+        return getattr(self, f'name_{language}', self.name_ru)
+
+class Book(models.Model):
+    title = models.CharField(max_length=200)
+    author = models.CharField(max_length=200)
+    description_ru = models.TextField()
+    description_en = models.TextField(blank=True, null=True)
+    description_kk = models.TextField(blank=True, null=True)
+    genre = models.ManyToManyField(Genre, blank=True)
+    tropes = models.ManyToManyField(Trope, blank=True)
+    country_ru = models.TextField()
+    country_en = models.TextField(blank=True, null=True)
+    country_kk = models.TextField(blank=True, null=True)
+    year = models.IntegerField()
+    pages = models.IntegerField()
+    rating = models.FloatField(default=0.0)
+    cover_image = models.ImageField(upload_to='book_covers/', null=True, blank=True)
+    age_rating = models.CharField(max_length=50, null=True, blank=True)
+    
+    def get_description(self, language='ru'):
+        desc = getattr(self, f'description_{language}', None)
+        return desc if desc else self.description_ru
+    
+    def save(self, *args, **kwargs):
+        # Автоматический перевод при сохранении
+        if not self.description_en:
+            self.description_en = auto_translate(self.description_ru, 'en')
+        if not self.description_kk:
+            self.description_kk = auto_translate(self.description_ru, 'kk')
+        
+        super().save(*args, **kwargs)
+
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None, **extra_fields):
         if not email:
@@ -51,3 +105,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     def __str__(self):
         return self.email
+    
+    @property
+    def avatar_url(self):
+        if self.avatar:
+            return self.avatar.url
+        return '/media/avatars/default-avatar.png'

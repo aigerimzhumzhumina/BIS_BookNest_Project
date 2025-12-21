@@ -18,7 +18,7 @@
 
         <div class="profile-card">
           <div class="avatar-section">
-            <img [src]="isEditMode ? editUser.avatar : currentUser.avatar" 
+            <img [src]="(isEditMode ? editUser.avatar : currentUser.avatar) | mediaUrl" 
                  [alt]="currentUser.username" 
                  class="avatar"
                  (error)="onImageError($event)">
@@ -103,7 +103,11 @@
         <h2 class="section-title">{{ 'dashboard.currentlyReading' | translate }}</h2>
         @if (currentBook) {
           <div class="current-book-card">
-            <img [src]="currentBook.book.cover" [alt]="currentBook.book.title" class="book-cover">
+            <img 
+              [src]="currentBook.book.cover | mediaUrl" 
+              [alt]="currentBook.book.title" 
+              class="book-cover"
+              (error)="onImageError($event)">
             <div class="book-details">
               <h3>{{ currentBook.book.title }}</h3>
               <p class="author">{{ currentBook.book.author }}</p>
@@ -141,7 +145,10 @@
                 <button class="btn-remove" (click)="removeFromFavorites(book.id)" title="Remove from favorites">
                   ✕
                 </button>
-                <img [src]="book.book.cover" [alt]="book.book.title" (click)="navigateToBook(book.id)">
+                <img 
+                  [src]="book.book.cover | mediaUrl" 
+                  [alt]="book.book.title"
+                  (error)="onImageError($event)">
                 <div class="book-info">
                   <h4 (click)="navigateToBook(book.id)">{{ book.book.title }}</h4>
                   <p>{{ book.book.author }}</p>
@@ -153,6 +160,65 @@
           <div class="empty-state">
             <p>{{ 'dashboard.noFavorites' | translate }}</p>
             <button class="btn-primary" routerLink="/search">{{ 'dashboard.findBooks' | translate }}</button>
+          </div>
+        }
+      </section>
+
+      <!-- User Charts Section -->
+      <section class="charts-section">
+        <div class="section-header">
+          <h2 class="section-title">{{ 'dashboard.charts' | translate }} ({{ userChart.length }})</h2>
+          <button class="btn-create-chart" routerLink="/create-chart">
+            {{ 'dashboard.createChart' | translate }}
+          </button>
+        </div>
+
+        @if (isLoadingCharts) {
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>{{ 'dashboard.loadChart' | translate }}</p>
+          </div>
+        } @else if (userChart.length > 0) {
+          <div class="charts-grid">
+            @for (chart of userChart; track chart.id) {
+              <div class="chart-card">
+                <div class="chart-cover" (click)="navigateToChart(chart.id)">
+                  @if (chart.cover_image) {
+                    <img 
+                      [src]="chart.cover_image | mediaUrl" 
+                      [alt]="chart.title"
+                      (error)="onImageError($event)">
+                  } @else {
+                    <div class="chart-placeholder">
+                      <span class="placeholder-icon">*</span>
+                    </div>
+                  }
+                  <div class="chart-overlay">
+                    <span class="view-chart">{{ 'dashboard.open' | translate }} →</span>
+                  </div>
+                </div>
+                <div class="chart-info">
+                  <h3 (click)="navigateToChart(chart.id)">{{ chart.title }}</h3>
+                  @if (chart.description) {
+                    <p class="chart-description">{{ chart.description }}</p>
+                  }
+                  <div class="chart-meta">
+                    <span class="book-count"> {{ chart.books.length }} {{ 'dashboard.books' | translate }}</span>
+                    @if (chart.is_public) {
+                      <span class="public-badge">{{ 'dashboard.public' | translate }}</span>
+                    }
+                  </div>
+                  <button class="btn-delete-chart" (click)="deleteChart(chart.id)">
+                    {{ 'dashboard.delete' | translate }}
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>{{ 'dashboard.noCharts' | translate }}</p>
+            <button class="btn-primary" routerLink="/create-chart">{{ 'dashboard.createFirstChart' | translate }}</button>
           </div>
         }
       </section>

@@ -1,12 +1,15 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
-from .models import User
+from .models import User, Book, Genre, Trope
 import traceback
+from django.core.files.storage import default_storage
+import os
 
 
 class RegisterView(APIView):
@@ -151,6 +154,38 @@ class LogoutView(APIView):
                 'message': 'Logout successful'
             }, status=status.HTTP_200_OK)
 
+class UploadAvatarView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        if 'avatar' not in request.FILES:
+            return Response({'error': 'No file provided'}, status=400)
+
+        avatar_file = request.FILES['avatar']
+
+        #Валидация типа файла
+        if not avatar_file.content_type.startswith('image/'):
+            return Response({'error': 'File must be an image'}, status=400)
+
+        #Валидация размера
+        if avatar_file.size > 5 * 1024 * 1024:
+            return Response({'error': 'File size must be less than 5MB'}, status=400)
+
+        user = request.user
+
+        #Удаляем старый аватар
+        if user.avatar and 'default-avatar' not in user.avatar.name:
+            if os.path.isfile(user.avatar.path):
+                os.remove(user.avatar.path)
+
+        #Сохраняем новый аватар
+        user.avatar = avatar_file
+        user.save()
+
+        #Полный URL аватара
+        avatar_url = request.build_absolute_uri(user.avatar.url)
+
+        return Response({'avatar_url': avatar_url}, status=200)
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -171,3 +206,49 @@ class UserProfileView(APIView):
                 'success': False,
                 'message': f'Server error: {str(e)}'
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+class BookListView(APIView):
+    def get(self, request):
+        language = request.GET.get('lang', 'ru')
+        books = Book.objects.all()
+
+        data = []
+        for book in books:
+            data.append({
+                'id': book.id,
+                'title': book.title,
+                'author': book.author,
+                'description': book.get_description(language),
+                'cover_image': request.build_absolute_uri(book.cover_image.url) if book.cover_image else None,
+                'country': book.country_ru if language == 'ru' else book.country_en if language == 'en' else book.country_kk,
+                'year': book.year,
+                'pages': book.pages,
+                'rating': book.rating,
+                'age_rating': book.age_rating
+            })
+
+        return Response({
+            'books': data,
+            'total': len(data)
+        })
+
+
+class GenreListView(APIView):
+    def get(self, request):
+        language = request.GET.get('lang', 'ru')
+        genres = Genre.objects.all()
+
+        return Response([
+            genre.get_name(language) for genre in genres
+        ])
+
+
+class TropeListView(APIView):
+    def get(self, request):
+        language = request.GET.get('lang', 'ru')
+        tropes = Trope.objects.all()
+
+        return Response([
+            trope.get_name(language) for trope in tropes
+        ])

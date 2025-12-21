@@ -187,7 +187,11 @@
           @for (book of books; track book.id) {
             <div class="book-card" (click)="navigateToBook(book.id)">
               <div class="book-cover-wrapper">
-                <img [src]="book.cover" [alt]="book.title" class="book-cover">
+                <img 
+                  [src]="book.cover | mediaUrl" 
+                  [alt]="book.title" 
+                  class="book-cover"
+                  (error)="onImageError($event)">
                 <div class="book-overlay">
                   <span class="view-details">{{ 'search.viewDetails' | translate }}</span>
                 </div>

@@ -1,0 +1,110 @@
+<app-header></app-header>
+
+<div class="chart-view-container">
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>{{ 'dashboard.loadsingleChart' | translate }}</p>
+    </div>
+  } @else if (chart) {
+    <div class="chart-view-content">
+      <!-- Chart Header -->
+      <section class="chart-header">
+        <div class="chart-cover-section">
+          @if (chart.cover_image) {
+            <img 
+              [src]="chart.cover_image | mediaUrl" 
+              [alt]="chart.title" 
+              class="chart-cover-large"
+              (error)="onImageError($event)">
+          } @else {
+            <div class="chart-placeholder-large">
+              <span class="placeholder-icon">*</span>
+            </div>
+          }
+        </div>
+
+        <div class="chart-main-info">
+          <h1 class="chart-title">{{ chart.title }}</h1>
+          
+          @if (chart.description) {
+            <p class="chart-description">{{ chart.description }}</p>
+          }
+
+          <div class="chart-meta">
+            <div class="meta-item">
+              <span class="meta-label">{{ 'dashboard.chartBooks' | translate }}</span>
+              <span class="meta-value">{{ chart.books.length }}</span>
+            </div>
+            
+            <div class="meta-item">
+              <span class="meta-label">{{ 'dashboard.status' | translate }}</span>
+              @if (chart.is_public) {
+                <span class="badge badge-public">{{ 'dashboard.public' | translate }}</span>
+              } @else {
+                <span class="badge badge-private">{{ 'dashboard.private' | translate }}</span>
+              }
+            </div>
+          </div>
+
+          @if (isOwner) {
+            <div class="chart-actions">
+              <button class="btn-edit" (click)="editChart()">
+                {{ 'dashboard.edit' | translate }}
+              </button>
+              <button class="btn-delete" (click)="deleteChart()">
+                {{ 'dashboard.delete' | translate }}
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Books in Chart -->
+      <section class="books-section">
+        <h2 class="section-title">{{ 'dashboard.chartBooks' | translate }} ({{ chart.books.length }})</h2>
+        
+        @if (chart.books.length > 0) {
+          <div class="books-grid">
+            @for (book of chart.books; track book.id) {
+              <div class="book-card" (click)="navigateToBook(book.id)">
+                <div class="book-cover-wrapper">
+                  <img 
+                    [src]="book.cover | mediaUrl" 
+                    [alt]="book.title" 
+                    class="book-cover"
+                    (error)="onImageError($event)">
+                  <div class="book-overlay">
+                    <span class="view-book">{{ 'dashboard.moreInfo' | translate }}</span>
+                  </div>
+                </div>
+                <div class="book-info">
+                  <h3>{{ book.title }}</h3>
+                  <p class="book-author">{{ book.author }}</p>
+                  <div class="book-meta">
+                    <span class="rating">★ {{ book.rating }}</span>
+                    <span class="pages">🕮 {{ book.pages }} стр.</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <p>{{ 'dashboard.noBooksInChart' | translate }}</p>
+            @if (isOwner) {
+              <button class="btn-primary" (click)="editChart()">
+                {{ 'dashboard.addBooks' | translate }}
+              </button>
+            }
+          </div>
+        }
+      </section>
+    </div>
+  } @else {
+    <div class="error-state">
+      <h2>{{ 'dashboard.chartNoFound' | translate }}</h2>
+      <button class="btn-primary" routerLink="/dashboard">{{ 'dashboard.backToProfile' | translate }}</button>
+    </div>
+  }
+</div>

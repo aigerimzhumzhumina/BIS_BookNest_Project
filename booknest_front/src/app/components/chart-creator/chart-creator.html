@@ -37,7 +37,7 @@
             <label class="cover-label">{{ 'chart.coverLabel' | translate }}</label>
             <div class="cover-preview-wrapper">
               @if (chartCoverPreview) {
-                <img [src]="chartCoverPreview" alt="Chart cover" class="cover-preview">
+                <img [src]="chartCoverPreview | mediaUrl" alt="Chart cover" class="cover-preview">
               } @else {
                 <div class="cover-placeholder">
                   <span class="placeholder-icon">🖼️</span>
@@ -106,7 +106,11 @@
                   <div class="search-results">
                     @for (book of searchResults; track book.id) {
                       <div class="search-result-item" (click)="addBookToChart(book)">
-                        <img [src]="book.cover" [alt]="book.title" class="result-cover">
+                        <img 
+                          [src]="book.cover | mediaUrl" 
+                          [alt]="book.title" 
+                          class="result-cover"
+                          (error)="onImageError($event)">
                         <div class="result-info">
                           <h4>{{ book.title }}</h4>
                           <p>{{ book.author }}</p>
@@ -124,7 +128,10 @@
                 @for (book of selectedBooks; track book.id) {
                   <div class="selected-book-card">
                     <button class="btn-remove-book" (click)="removeBookFromChart(book.id)">✕</button>
-                    <img [src]="book.cover" [alt]="book.title">
+                    <img 
+                      [src]="book.cover | mediaUrl"
+                      [alt]="book.title"
+                      (error)="onImageError($event)">
                     <div class="book-info">
                       <h4>{{ book.title }}</h4>
                       <p>{{ book.author }}</p>
@@ -173,7 +180,10 @@
               <div class="chart-card">
                 <div class="chart-cover">
                   @if (chart.cover_image) {
-                    <img [src]="chart.cover_image" [alt]="chart.title">
+                    <img 
+                      [src]="chart.cover_image | mediaUrl" 
+                      [alt]="chart.title"
+                      (error)="onImageError($event)">
                   } @else {
                     <div class="chart-placeholder">
                       <span>✦</span>

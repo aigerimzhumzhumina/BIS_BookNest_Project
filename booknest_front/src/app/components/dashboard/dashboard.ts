@@ -1,28 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, User } from '../../services/auth';
-import { ApiService, CurrentBook, FavoriteBook, UserProfile } from '../../services/api';
+import { ApiService, CurrentBook, FavoriteBook, UserProfile, Chart } from '../../services/api';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../header/header";
 import { Book } from '../../services/book';
 import { TranslatePipe } from '../../pipes/translate-pipe';
+import { MediaUrlPipe } from '../../pipes/media-url-pipe';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.html',
   styleUrls: ['./dashboard.css'],
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent, TranslatePipe]
+  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent, TranslatePipe, MediaUrlPipe]
 })
 export class DashboardComponent implements OnInit {
   currentUser: UserProfile | null = null;
   currentBook: CurrentBook | null = null;
   favoriteBooks: FavoriteBook[] = [];
   favouriteBook: Book | null = null;
+  userChart: Chart[] = [];
   isEditMode: boolean = false;
   isLoadingProfile: boolean = true;
   isLoadingCurrentBook: boolean = true;
   isLoadingFavorites: boolean = true;
+  isLoadingCharts = true;
   editUser: Partial<User> = {};
 
 
@@ -32,6 +35,7 @@ export class DashboardComponent implements OnInit {
     this.loadUserData();
     this.loadCurrentBook();
     this.loadFavoriteBooks();
+    this.loadUserCharts();
   }
   loadUserData(): void {
     this.isLoadingProfile = true;
@@ -103,6 +107,22 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  loadUserCharts(): void {
+    this.isLoadingCharts = true;
+    
+    this.apiService.getUserCharts().subscribe({
+      next: (charts) => {
+        this.userChart = charts;
+        this.isLoadingCharts = false;
+      },
+      error: (error) => {
+        console.error('Error loading charts:', error);
+        this.userChart = [];
+        this.isLoadingCharts = false;
+      }
+    });
+  }
+
   toggleEditMode(): void {
     if (this.isEditMode) {
       // Отмена изменений
@@ -121,12 +141,13 @@ export class DashboardComponent implements OnInit {
           ...this.currentUser!,
           username: updatedProfile.username,
           email: updatedProfile.email,
-          avatar: updatedProfile.avatar || this.currentUser!.avatar,
+          avatar: updatedProfile.avatar || this.editUser.avatar || 'assets/avatars/default-avatar.png',
           age: updatedProfile.age,
           city: updatedProfile.city,
           bio: updatedProfile.bio,
           joined_date: updatedProfile.joined_date
         };
+        this.editUser = { ...this.currentUser };
         this.isEditMode = false;
         console.log('User profile updated successfully!');
       },
@@ -155,8 +176,12 @@ export class DashboardComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = (e: any) => {
       // Временно показываем локальный preview
+      const newAvatarUrl = e.target.result;
       if (this.editUser) {
-        this.editUser.avatar = e.target.result;
+        this.editUser.avatar = newAvatarUrl;
+      }
+      if (this.currentUser) {
+        this.currentUser.avatar = newAvatarUrl;
       }
     };
     reader.readAsDataURL(file);
@@ -170,6 +195,7 @@ export class DashboardComponent implements OnInit {
           this.currentUser.avatar = response.avatar_url;
           this.editUser.avatar = response.avatar_url;
         }
+        this.currentUser = { ...this.currentUser! };
       },
       error: (error) => {
         console.error('Error uploading avatar:', error);
@@ -183,8 +209,9 @@ export class DashboardComponent implements OnInit {
   }
 
   onImageError(event: any): void {
-    // Если изображение не загрузилось, показываем placeholder
+    console.log('Image failed to load, using fallback');
     event.target.src = 'assets/avatars/default-avatar.png';
+    event.target.src = 'assets/books/placeholder-book.svg';
   }
   
   continueReading(): void {
@@ -207,6 +234,24 @@ export class DashboardComponent implements OnInit {
         console.error('Error removing from favorites:', error);
       }
     });
+  }
+
+  navigateToChart(chartId: number): void {
+    this.router.navigate(['/chart', chartId]);
+  }
+
+  deleteChart(chartId: number): void {
+    if (confirm('Вы уверены, что хотите удалить этот чарт?')) {
+      this.apiService.deleteChart(chartId).subscribe({
+        next: () => {
+          this.userChart = this.userChart.filter(chart => chart.id !== chartId);
+          console.log('Chart deleted');
+        },
+        error: (error) => {
+          console.error('Error deleting chart:', error);
+        }
+      });
+    }
   }
 
   logout(): void {

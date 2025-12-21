@@ -1,0 +1,10 @@
+<svg width="200" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="300" fill="#282B24"/>
+  <g transform="translate(100, 150)">
+    <path d="M-30,-40 L-30,40 L30,40 L30,-40 Z" fill="#521C1C"/>
+    <rect x="-30" y="-45" width="60" height="10" fill="#6d2525"/>
+    <text x="0" y="70" font-family="Arial" font-size="14" fill="#FFFFFF" text-anchor="middle">
+      No Cover
+    </text>
+  </g>
+</svg>
