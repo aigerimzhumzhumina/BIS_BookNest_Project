@@ -100,13 +100,13 @@ export class ApiService {
   // ==================== USER PROFILE ====================
   
   getUserProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>(`${this.apiUrl}/user/profile/`, {
+    return this.http.get<UserProfile>(`${this.apiUrl}/auth/user/profile/`, {
       headers: this.getHeaders()
     }).pipe(catchError(this.handleError));
   }
 
   updateUserProfile(profile: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.patch<UserProfile>(`${this.apiUrl}/user/profile/`, profile, {
+    return this.http.patch<UserProfile>(`${this.apiUrl}/auth/user/profile/`, profile, {
       headers: this.getHeaders()
     }).pipe(catchError(this.handleError));
   }
@@ -120,7 +120,7 @@ export class ApiService {
       'Authorization': token ? `Bearer ${token}` : ''
     });
 
-    return this.http.post<{ avatar_url: string }>(`${this.apiUrl}/user/avatar/`, formData, {
+    return this.http.post<{ avatar_url: string }>(`${this.apiUrl}/auth/user/avatar/`, formData, {
       headers: headers
     }).pipe(catchError(this.handleError));
   }
